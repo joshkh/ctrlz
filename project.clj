@@ -1,14 +1,14 @@
 (defproject joshkh/ctrlz "0.1.0"
   :description "A library which provides undo/redo facility for re-frame"
   :license {:name "MIT"}
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.89"]
-                 [re-frame "0.8.0"]]
+  :dependencies [[org.clojure/clojure "1.9.0"]
+                 [org.clojure/clojurescript "1.9.946"]
+                 [re-frame "0.10.3"]]
 
   :profiles {:debug {:debug true}
-             :dev {:dependencies [[karma-reporter "1.0.1"]
-                                  [binaryage/devtools "0.8.1"]]
-                   :plugins [[lein-ancient "0.6.10"]
+             :dev {:dependencies [[karma-reporter "2.1.2"]
+                                  [binaryage/devtools "0.9.9"]]
+                   :plugins [[lein-ancient "0.6.15"]
                              [lein-cljsbuild "1.1.4"]
                              [lein-npm "0.6.2"]
                              [lein-shell "0.5.0"]]}}
