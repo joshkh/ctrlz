@@ -10,6 +10,7 @@
 
 (def ^:private config (atom {:max-undos 50 ;; Maximum number of undo states maintained
                              :harvest-fn deref
+                             :post-reinstate-fn nil
                              :reinstate-fn reset!}))
 
 (defn undo-config!
@@ -133,15 +134,14 @@
     (swap! redos assoc-in location r)
     (swap! undos update-in location pop)))
 
-
 (defn undo-n
   "undo n steps or until we run out of undos"
   [location n]
-
-  (when (and (pos? n) (undos? location))
-    (undo (:harvest-fn @config) (:reinstate-fn @config) undo-list app-db redo-list location)
-    (undo deref reset! undo-explain-list app-explain redo-explain-list location)
-    (recur location (dec n))))
+  (if-not (and (pos? n) (undos? location))
+    (when-let [post-reinstate-fn (:post-reinstate-fn @config)] (post-reinstate-fn location))
+    (do (undo (:harvest-fn @config) (:reinstate-fn @config) undo-list app-db redo-list location)
+        (undo deref reset! undo-explain-list app-explain redo-explain-list location)
+        (recur location (dec n)))))
 
 (defn undo-handler
   [_ [_ location n]]
@@ -161,10 +161,12 @@
 (defn redo-n
   "redo n steps or until we run out of redos"
   [location n]
-  (when (and (pos? n) (redos? location))
-    (redo (:harvest-fn @config) (:reinstate-fn @config) undo-list app-db redo-list location)
-    (redo deref reset! undo-explain-list app-explain redo-explain-list location)
-    (recur location (dec n))))
+  (if-not (and (pos? n) (redos? location))
+    (when-let [post-reinstate-fn (:post-reinstate-fn @config)] (post-reinstate-fn location))
+    (do
+      (redo (:harvest-fn @config) (:reinstate-fn @config) undo-list app-db redo-list location)
+      (redo deref reset! undo-explain-list app-explain redo-explain-list location)
+      (recur location (dec n)))))
 
 (defn redo-handler
   [_ [_ location n]] ;; if n absent, defaults to 1

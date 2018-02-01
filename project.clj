@@ -1,4 +1,4 @@
-(defproject joshkh/ctrlz "0.2.0"
+(defproject joshkh/ctrlz "0.3.0"
   :description "A library which provides undo/redo facility for re-frame"
   :license {:name "MIT"}
   :dependencies [[org.clojure/clojure "1.9.0"]
